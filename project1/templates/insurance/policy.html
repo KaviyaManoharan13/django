@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Policies</title>
+</head>
+<body>
+    <h1>My Policies</h1>
+    <ul>
+        {% for customer_policy in customer_policies %}
+            <li>{{ customer_policy.policy.name }} - {{ customer_policy.start_date }} to {{ customer_policy.end_date }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

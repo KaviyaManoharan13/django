@@ -1,0 +1,3 @@
+FILE PATH : :cd Documents/tamilkaviya/SQGS-POWER/api/src/
+ENV PATH :source ~/Documents/tamilkaviya/ENV/dqms/bin/activate
+ssh pi@192.168.17.94

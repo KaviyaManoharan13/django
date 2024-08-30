@@ -1,0 +1,234 @@
+import os
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from .models import SOP
+
+class SOPView(APIView):
+    """API view for handling SOP-related requests"""
+
+    @staticmethod
+    def get_soptype_by_model(model_id):
+        """Get unique SOP types based on model_id"""
+        sop_queryset = SOP.objects.filter(model=model_id)
+        soptype = set(sop_queryset.values_list("sop_type__soptype", flat=True))
+        return soptype
+
+    @staticmethod
+    def get_description_by_soptype(sop_type):
+        """Get descriptions based on sop_type"""
+        sop_queryset = SOP.objects.filter(sop_type__soptype=sop_type)
+        descriptions = sop_queryset.values_list("description", flat=True)
+        return descriptions
+
+    @staticmethod
+    def get_file_info_by_description(description):
+        """Get file information based on description"""
+        sop_queryset = SOP.objects.filter(description=description)
+        file_paths = sop_queryset.values_list("file_path", flat=True)
+        media_file_urls = ["/media/" + file_path for file_path in file_paths]
+        file_type = os.path.splitext(media_file_urls[0])[1]
+        if file_type == ".xlsx":
+            file_type = "Excel"
+        if file_type in [".jpeg", ".png", ".PNG", ".jpg"]:
+            file_type = "Image"
+        return {"filepath": media_file_urls, "type": file_type}
+
+    def get(self, request):
+        """Handle GET request"""
+        request_type = request.GET.get("type")
+        model_id = request.GET.get("model")
+
+        if request_type == "sop":
+            soptype = self.get_soptype_by_model(model_id)
+            return Response({"soptype": soptype}, status=status.HTTP_200_OK)
+
+        elif request_type == "soptype":
+            descriptions = self.get_description_by_soptype(model_id)
+            return Response({"description": descriptions}, status=status.HTTP_200_OK)
+
+        elif request_type == "description":
+            file_info = self.get_file_info_by_description(model_id)
+            return Response(file_info, status=status.HTTP_200_OK)
+
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+old method_______________________________________________________________________________________________________-
+"""Thefolowing code represent the SOP"""
+import os
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from .models import SOP
+
+
+class SOPView(APIView):
+    """THE FOLOWING FUNCTIONS ARE"""
+
+    @classmethod
+    def get(cls, request):
+        """This explaning the response based on user request"""
+        if request.GET["type"] == "sop":
+            model_id = request.GET["model"]
+            sop = SOP.objects.filter(model=model_id)
+            soptype = set(sop.values_list("sop_type__soptype", flat=True))
+            return Response(
+                {
+                    "soptype": soptype,
+                },
+                status=status.HTTP_200_OK,
+            )
+        elif request.GET["type"] == "soptype":
+            name = request.GET["model"]
+            sop = SOP.objects.filter(sop_type__soptype=name)
+            description = sop.values_list("description", flat=True)
+            return Response(
+                {
+                    "description": description,
+                },
+                status=status.HTTP_200_OK,
+            )
+        elif request.GET["type"] == "description":
+            description = request.GET["model"]
+            sop_description = SOP.objects.filter(description=description)
+            filepaths = sop_description.values_list("file_path", flat=True)
+            media_file_urls = ["/media/" + filepath for filepath in filepaths]
+            file_type = os.path.splitext(media_file_urls[0])[1]
+            if file_type == ".xlsx":
+                file_type = "Excel"
+            if file_type in [".jpeg", ".png", ".PNG", ".jpg"]:
+                file_type = "Image"
+            return Response(
+                {"filepath": media_file_urls, "type": file_type},
+                status=status.HTTP_200_OK,
+            )
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+old code-------------------------------------views.py
+"""This view handles various types of requests related to SOPs:
+for SOP types, descriptions, and associated file paths."""
+
+import os
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from .models import SOP
+
+
+class SOPView(APIView):
+    """The Following Functions"""
+
+    @classmethod
+    def get(cls, request):
+        """This explaning the response based on user request"""
+        if request.GET["type"] == "sop":
+            model_id = request.GET["model"]
+            sop = SOP.objects.filter(model=model_id)
+            soptype = set(sop.values_list("sop_type__soptype", flat=True))
+            return Response(
+                {
+                    "soptype": soptype,
+                },
+                status=status.HTTP_200_OK,
+            )
+        elif request.GET["type"] == "soptype":
+            name = request.GET["model"]
+            sop = SOP.objects.filter(sop_type__soptype=name)
+            description = sop.values_list("description", flat=True)
+            return Response(
+                {
+                    "description": description,
+                },
+                status=status.HTTP_200_OK,
+            )
+        elif request.GET["type"] == "description":
+            description = request.GET["model"]
+            sop_description = SOP.objects.filter(description=description)
+            filepaths = sop_description.values_list("file_path", flat=True)
+            media_file_urls = ["/media/" + filepath for filepath in filepaths]
+            file_type = os.path.splitext(media_file_urls[0])[1]
+            if file_type == ".xlsx":
+                file_type = "Excel"
+            if file_type in [".jpeg", ".png", ".PNG", ".jpg"]:
+                file_type = "Image"
+            return Response(
+                {"filepath": media_file_urls, "type": file_type},
+                status=status.HTTP_200_OK,
+            )
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+     new========-------------------------------
+import os
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from .models import SOP
+
+class SOPView(APIView):
+    """The Following Functions"""
+
+    @staticmethod
+    def get_soptype(model_id):
+        sop = SOP.objects.filter(model=model_id)
+        soptype = set(sop.values_list("sop_type__soptype", flat=True))
+        return soptype
+
+    @staticmethod
+    def get_description(name):
+        sop = SOP.objects.filter(sop_type__soptype=name)
+        description = sop.values_list("description", flat=True)
+        return description
+
+    @staticmethod
+    def get_filepath(description):
+        sop_description = SOP.objects.filter(description=description)
+        filepaths = sop_description.values_list("file_path", flat=True)
+        media_file_urls = ["/media/" + filepath for filepath in filepaths]
+        file_type = os.path.splitext(media_file_urls[0])[1]
+        if file_type == ".xlsx":
+            file_type = "Excel"
+        if file_type in [".jpeg", ".png", ".PNG", ".jpg"]:
+            file_type = "Image"
+        return {"filepath": media_file_urls, "type": file_type}
+
+    def get(self, request):
+        if "type" not in request.GET or "model" not in request.GET:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        req_type = request.GET["type"]
+        model_value = request.GET["model"]
+
+        if req_type == "sop":
+            soptype = self.get_soptype(model_value)
+            return Response({"soptype": soptype}, status=status.HTTP_200_OK)
+        elif req_type == "soptype":
+            description = self.get_description(model_value)
+            return Response({"description": description}, status=status.HTTP_200_OK)
+        elif req_type == "description":
+            response_data = self.get_filepath(model_value)
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+

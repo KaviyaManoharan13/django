@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Indian Railways</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0c08a;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #0c56ea;
+            margin-top: 30px;
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            text-align: center;
+        }
+        li {
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trains</h1>
+    <ul>
+        {% for train in trains %}
+        <li>{{ train.number }} - {{ train.name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

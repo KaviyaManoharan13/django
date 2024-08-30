@@ -1,0 +1,79 @@
+UPGRADE (DJANGO)
+
+1.  
+   Print statement should be enclosd by()
+----------------------------------------------------------------------------------------------
+
+
+
+2. 
+
+  lib/python3.11/site-packages/modelclone/admin.py", line 64, in get_urls
+    url(r'^(.+)/change/clone/$',
+    ^^^
+NameError: name 'url' is not defined----" Modify URL into PATH""
+-------------------------------------------------------------------------------------------------
+
+
+
+
+3.
+
+		lib/python3.11/site-packages/multiselectfield/db/fields.py", line 72, in __init__
+    self.validators[0] = MaxValueMultiFieldValidator(self.max_length)
+
+convert into 
+
+    self.validators = MaxValueMultiFieldValidator(self.max_length)
+-----------------------------------------------------------------------------------------------
+ 4.
+	Need to install the package "pip install sorl-thumbnail".
+----------------------------------------------------------------------------------------------
+ 5.
+ 
+    lib/python3.11/site-packages/multiselectfield/db/fields.py self.min_choices = kwargs.pop('min_choices', None)
+
+	From:[ Line N0: 72] 
+             self.max_choices = kwargs.pop('max_choices', None)
+             super(MultiSelectField, self).__init__(*args, **kwargs)
+             self.max_length = get_max_length(self.choices, self.max_length)
+         72. self.validators = MaxValueMultiFieldValidator(self.max_length)
+             if self.min_choices is not None:
+                  self.validators.append(MinChoicesValidator(self.min_choices))
+             if self.max_choices is not None:
+                  self.validators.append(MaxChoicesValidator(self.max_choices))
+
+   To:
+	
+	69 self.min_choices = kwargs.pop('min_choices', None)
+	70 self.max_choices = kwargs.pop('max_choices', None)
+	71 super(MultiSelectField, self).__init__(*args, **kwargs)
+	72 self.max_length = get_max_length(self.choices, self.max_length)
+	73 self.validators = []  # Ensure validators list is initialized
+	74 self.validators.append(MaxValueMultiFieldValidator(self.max_length))
+	75 if self.min_choices is not None:
+	76     self.validators.append(MinChoicesValidator(self.min_choices))
+	77 if self.max_choices is not None:
+	78     self.validators.append(MaxChoicesValidator(self.max_choices))
+----------------------------------------------------
+
+6.    /lib/python3.11/site-packages/django/conf/urls/__init__.py
+
+	from:
+		from django.urls import include
+		from django.views import defaults
+
+	To:
+		from django.urls import include path " need to add path"
+		from django.views import defaults
+-------------------------------------------------------------------------------------------
+7.
+	lib/python3.11/site-packages/smart_selects/form_fields.py
+	line 63,142:
+
+		remove: "  ChoiceField._set_choices)"
+---------------------------------------------------------------------------------------------------
+
+
+	
+			

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Policies</title>
+</head>
+<body>
+    <h1>Available Insurance Policies</h1>
+    <ul>
+        {% for policy in policies %}
+            <li>{{ policy.name }} - {{ policy.description }}
+                {% if user.is_authenticated %}
+                    <a href="{% url 'register_policy' policy.id %}">Register</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

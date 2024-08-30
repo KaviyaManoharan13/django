@@ -1,0 +1,471 @@
+RUNCHART FILTER HTML
+
+
+
+$("#runchart_search").click(function(e) {
+        // alert("ok")
+        
+        e.preventDefault();
+        var plant = $("#runchart_plant").val();
+        var from_date = $("#runchart_summary input[name=from_date]").val();
+        var to_date = $("#runchart_summary input[name=to_date]").val(); 
+        var model = $("#runchart_model").val();
+        var station = $("#runchart_station").val();
+        var parameter = $("#runchart_parameter").val();
+       
+        $.ajax({
+            "type": "POST",
+            "url": '/runchart/summary/search/',
+            "data": {
+                "plant": plant,
+                "from_date": from_date,
+                "to_date": to_date,
+                "model": model,
+                "station": station,
+                "parameter": parameter                
+            },
+            
+            beforeSend: function(xhr, settings) {
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                    // Only send the token to relative URLs i.e. locally.
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+                $.showLoading({
+                    allowHide: true
+                });
+            },
+            success: function(data) {
+                debugger;
+                $('#rft_ppm_monthly').show();
+                rft_ppm_month_wise_chart(data);
+            },
+            complete: function() {
+                $.hideLoading();
+            },
+        });
+    });
+
+    $('#runchart_plant').change(function() {
+        post_filter_form();
+        
+        document.getElementById("runchart_station").options.length = 1;
+        // document.getElementById("runchart_model").options.length = 1;
+
+    });
+    $('#runchart_station').change(function() {
+        post_filter_forms();
+        document.getElementById("runchart_model").options.length = 1 ;
+    });
+
+    $('#runchart_model').change(function() {
+        post_filter_forms_models();
+        document.getElementById("runchart_parameter").options.length = 1 ;
+    });
+
+    
+
+    function post_filter_form() {
+        var e = document.getElementById("runchart_plant");
+        var plant = e.options[e.selectedIndex].value;
+            $.ajax({
+                "type": "POST",
+                "url": '/chart/filter/',
+                "data": {
+                    "plant": plant
+                },
+                beforeSend: function(xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                    $.showLoading({
+                        allowHide: true
+                    });
+                },
+                success: function(data) {
+                    console.log(data)
+                    var htmlDropDown = $("#runchart_station");
+                    $.each(data.station, function(index, item) {
+                        htmlDropDown.append(
+                            $('<option/>', {
+                                value: item.id,
+                                text: item.description
+                            })
+                        );
+                    });
+                    $("#runchart_model").dropdown();
+                    var htmlDropDown = $("#runchart_model");
+                    console.log(data.stage)
+                    $.each(data.stage, function(index, item) {
+                        htmlDropDown.append(
+                            $('<option/>', {
+                                value: item.id,
+                                text: item.description
+                            })
+                        );
+                    });
+                    $("#runchart_model").dropdown();
+                    
+                    
+
+                },
+                complete: function() {
+                    $.hideLoading();
+                },
+            });
+        } 
+
+        function post_filter_forms() {
+        debugger
+        var e = document.getElementById("runchart_station");
+        var station = e.options[e.selectedIndex].value;
+            $.ajax({
+                "type": "POST",
+                "url": '/chart/filter/',
+                "data": {
+                    "station": station,
+                    
+                },
+                beforeSend: function(xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                    $.showLoading({
+                        allowHide: true
+                    });
+                },
+                success: function(data) {
+                    console.log(data)
+                    var htmlDropDown = $("#runchart_model");
+                    $.each(data.model, function(index, item) {
+                        console.log(data.model)
+                        htmlDropDown.append(
+                            $('<option/>', {
+                                value: item.id,
+                                text: item.model__description
+                            })
+                        );
+                    });
+                    $("#runchart_model").dropdown();
+
+                },
+                complete: function() {
+                    $.hideLoading();
+                },
+            });
+        } 
+
+
+        function post_filter_forms_models() {
+        debugger
+        var e = document.getElementById("runchart_model");
+        var modelstation = e.options[e.selectedIndex].value;
+            $.ajax({
+                "type": "POST",
+                "url": '/chart/filter/',
+                "data": {
+                    "modelstation": modelstation,
+                    
+                },
+                beforeSend: function(xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                    $.showLoading({
+                        allowHide: true
+                    });
+                },
+                success: function(data) {
+                    console.log(data)
+                    var htmlDropDown = $("#runchart_parameter");
+                    $.each(data.parameter, function(index, item) {
+                        console.log(data.parameter)
+                        htmlDropDown.append(
+                            $('<option/>', {
+                                value: item.Id,
+                                text: item.parametername
+                            })
+                        );
+                    });
+                    $("#runchart_parameter").dropdown();
+
+                },
+                complete: function() {
+                    $.hideLoading();
+                },
+            });
+        } 
+
+
+    
+        function rft_ppm_month_wise_chart(chartData){
+            debugger;
+            if ("undefined" != typeof echarts) {
+                console.log("init_echarts");
+                if (chartData.arrow == 'up'){
+                    chartData.arrow = '▲';
+                } else {
+                    chartData.arrow = '▼';
+                }
+                var a = {
+                    color: [ "#7f7f7f", '#ee8239',"#70a8db"]
+                };
+                var b = echarts.init(document.getElementById("rft_ppm_monthly"), a);
+                b.setOption({
+                    title: [
+                        {
+                            text: 'INTERNAL RFT – PPM (Regular) - MONTHLY',
+                            subtext: chartData.subtitle,
+                            left: "left",
+                            top: "top",
+                            textStyle: {
+                                fontSize: 15,
+                            },
+                        },
+                        {
+                            text: chartData.arrow,
+                            left: "right",
+                            top: "top",
+                            padding: [1, 230, 0, 1],
+                            textStyle: {
+                                fontSize: 40,
+                            },
+                        },
+                        {
+                            text: "Better",
+                            left: "right",
+                            top: "top",
+                            padding: [10, 190, 0, 1],
+                            // subtextStyle: {
+                            //     fontSize: 16
+                            // },
+                            textStyle: {
+                                fontSize: 14,
+                            },
+                        },
+                        {
+                            text: "Status",
+                            left: "right",
+                            top: "top",
+                            padding: [10, 110, 0, 1],
+                            textStyle: {
+                                fontSize: 14,
+                            },
+                            subtextStyle: {
+                                fontSize: 15,
+                            }
+                        },
+                        {
+                            text: "▀",
+                            left: "right",
+                            top: "top",
+                            padding: [10, 60, 0, 1],
+                            textStyle: {
+                                fontSize: 50,
+                                color: chartData.status_color
+                            }
+                        }
+                    ],
+                    tooltip: {
+                        trigger: "axis"
+                    },
+                    toolbox: {
+                        show: !0,
+                        orient: 'vertical',
+                        x: 'right',
+                        y: 'center',
+                        top: 100,
+                        feature: {
+                            // magicType: {
+                            //     show: !0,
+                            //     title: {
+                            //         line: "Line",
+                            //         bar: "Bar",
+                            //         tiled: "Tiled"
+                            //     },
+                            //     type: ["line", "bar", "tiled"]
+                            // },
+                            // dataView: {
+                            //     show: !0,
+                            //     title: "Table View",
+                            //     lang: ["Rolldown RFT", "Close", "Refresh"],
+                            //     readOnly: !0,
+                            //     optionToContent: function(opt) {
+                            //         var axisData = opt.xAxis[0].data;
+                            //         var series = opt.series;
+                            //         var table = '<div style="position: relative; overflow: auto; width: 100%; height: 230px; cursor: default;"><table class="table table-striped"><thead><tr>' +
+                            //             '<th>Date</th>' +
+                            //             '<th>' + series[3].name + '</th>' +
+                            //             '<th>' + series[1].name + '</th>' +
+                            //             '<th>' + series[2].name + '</th>' +
+                            //             '<th>' + series[0].name + '</th>' +
+                            //             '</tr></thead><tbody>';
+                            //         for (var i = 0, l = axisData.length; i < l; i++) {
+                            //             table += '<tr>' +
+                            //                 '<td>' + axisData[i] + '</td>' +
+                            //                 '<td>' + series[3].data[i] + '</td>' +
+                            //                 '<td>' + series[1].data[i] + '</td>' +
+                            //                 '<td>' + series[2].data[i] + '</td>' +
+                            //                 '<td>' + series[0].data[i] + '</td>' +
+                            //                 '</tr>';
+                            //         }
+                            //         table += '</tbody></table></div>';
+                            //         return table;
+                            //     }
+                            // },
+                            dataZoom: {
+                                show: true,
+                                title: {
+                                    zoom: "Zoom In",
+                                    back: "Zoom Out"
+                                },
+                            },
+                            restore: {
+                                show: !0,
+                                title: "Restore"
+                            },
+                            saveAsImage: {
+                                show: !0,
+                                title: "Save Image"
+                            }
+                        }
+                    },
+                    grid: {
+                        top: 120,
+                        height: '45%'
+                    },
+                    legend: {
+                        data : ['Past trend', 'Target', 'Actual']
+                    },
+                    calculable: !0,
+                    xAxis: {
+                        type: "category",
+                        splitLine:{show:false},
+                        name: 'MONTH',
+                        nameLocation: 'middle',
+                        nameGap: 50,
+                        axisLabel: {
+                            show: true,
+                            clickable: true,
+                            interval: 0, // {number}
+                            rotate: 45,
+                            margin: 8
+                        },
+                        data: chartData.x_axis_label
+                    },
+                    yAxis: [
+                        {
+                            type: "value",
+                            splitLine:{show:false},
+                            name: 'PPM',
+                            nameLocation: 'middle',
+                            nameGap: 75,
+                        }
+                    ],
+                    series: [
+                        {
+                            smooth: !0,
+                            type: 'bar',
+                            name: 'Past trend',
+                            data: chartData.past_trend,
+                            yAxisIndex: 0,
+                            itemStyle : { normal: {label : {show: true, position: 'top'}}},
+                            symbolSize: 6,
+                            symbol:'circle'
+                        },
+                        {
+                            symbolSize: 6,
+                            symbol:'box',
+                            smooth: !0,
+                            type: 'line',
+                            name: 'Target',
+                            data: chartData.target,
+                            yAxisIndex: 0,
+                            itemStyle : { normal: {label : {show: true, position: 'top'}}},
+                            lineStyle: {
+                                normal: {
+                                  width: 3,
+                                }
+                            }
+                        },
+                        {
+                            symbolSize: 6,
+                            symbol:'diamond',
+                            smooth: !0,
+                            type: 'line',
+                            name: 'Actual',
+                            data: chartData.actual,
+                            yAxisIndex: 0,
+                            itemStyle : { normal: {label : {show: true, position: 'top'}}},
+                            lineStyle: {
+                                normal: {
+                                  width: 3,
+                                }
+                            }
+                        }
+                    ]
+                  });
+            }
+        }
+    
+
+       
+
+</script>
+{% endblock %}

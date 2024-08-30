@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library of London </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef5f9; /* Light blue background */
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        h1 {
+            color: #1f3d7a; /* Dark blue text color */
+            margin-top: 50px;
+            font-size: 36px;
+        }
+        a {
+            color: #1f3d7a; /* Dark blue link color */
+            text-decoration: none; /* Remove underline from links */
+            margin: 20px;
+            padding: 10px 20px;
+            border: 2px solid #1f3d7a; /* Dark blue border */
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            display: inline-block;
+        }
+        a:hover {
+            background-color: #1f3d7a; /* Dark blue background on hover */
+            color: #ffffff; /* White text color on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Library of London</h1>
+    <a href="{% url 'book_list' %}">Books</a>
+    <a href="{% url 'student_list' %}">Students</a>
+</body>
+</html>
